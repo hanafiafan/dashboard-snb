@@ -17,7 +17,6 @@ import {
   Trash2,
 } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
-import { Header } from "@/components/Header";
 import { JournalEntry, JournalItem } from "@/types";
 
 export default function JurnalUmumPage() {
@@ -146,8 +145,7 @@ export default function JurnalUmumPage() {
   };
 
   return (
-    <div className="space-y-8 pb-12">
-      <Header />
+    <div className="space-y-8 pb-12 animate-fadeIn">
 
       {/* Top Banner Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-card p-6 rounded-3xl border border-indigo-500/20 bg-gradient-to-r from-indigo-500/10 via-slate-900/40 to-emerald-500/10">

@@ -182,7 +182,30 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     };
 
     setDailySales((prev) => [...prev, newSale]);
-    showToast(`✅ Data penjualan tanggal ${raw.date} berhasil ditambahkan!`);
+
+    // Otomatis cetak jurnal akuntansi berpasangan (Double-Entry ERP)
+    const revAccountCode = raw.brand_id === "brand-agrodelta" ? "4102" : "4101";
+    const revAccountName = raw.brand_id === "brand-agrodelta" ? "Pendapatan Penjualan Agrodelta" : "Pendapatan Penjualan Antrasida";
+    const autoJournal: JournalEntry = {
+      id: `jrn-auto-${Date.now()}`,
+      transaction_code: `JRN/AUTO/${raw.date.replace(/-/g, "")}/${Math.floor(1000 + Math.random() * 9000)}`,
+      date: raw.date,
+      description: `Pencatatan Jurnal Otomatis Penjualan & Beban Harian (${raw.date})`,
+      brand_id: raw.brand_id,
+      is_automated: true,
+      items: [
+        { account_code: "1103", account_name: "Piutang Marketplace (Saldo Tertahan)", debit: raw.omset_finance, credit: 0 },
+        { account_code: "6101", account_name: "Biaya Admin & Pemprosesan Marketplace", debit: raw.admin_fee + raw.processing_fee, credit: 0 },
+        { account_code: "6102", account_name: "Beban Ongkir & Affiliasi", debit: raw.shipping_cost + raw.affiliate_cost, credit: 0 },
+        { account_code: "6103", account_name: "Beban Iklan (Ads Spend)", debit: raw.ads_spend, credit: 0 },
+        { account_code: "5101", account_name: "HPP Produk / Bahan Baku", debit: raw.hpp_cost, credit: 0 },
+        { account_code: revAccountCode, account_name: revAccountName, debit: 0, credit: raw.omset_finance + raw.admin_fee + raw.processing_fee + raw.shipping_cost + raw.affiliate_cost + raw.ads_spend },
+        { account_code: "1301", account_name: "Persediaan Bahan Baku & Kemasan", debit: 0, credit: raw.hpp_cost },
+      ],
+    };
+    setJournalEntries((prev) => [autoJournal, ...prev]);
+
+    showToast(`✅ Penjualan tanggal ${raw.date} & Jurnal Otomatis berhasil dicatat!`);
 
     if (isSupabaseConfigured && supabase) {
       await supabase.from("daily_sales").insert([newSale]);

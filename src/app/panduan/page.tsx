@@ -20,8 +20,6 @@ import {
   Calendar,
   ArrowRight,
 } from "lucide-react";
-import { Header } from "@/components/Header";
-
 export default function PanduanSistemPage() {
   const [activeTab, setActiveTab] = useState<string>("workflow");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -37,8 +35,7 @@ export default function PanduanSistemPage() {
   ];
 
   return (
-    <div className="space-y-8 pb-16">
-      <Header />
+    <div className="space-y-8 pb-16 animate-fadeIn">
 
       <div className="px-8 max-w-7xl mx-auto space-y-8">
         {/* Banner Utama */}

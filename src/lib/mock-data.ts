@@ -470,7 +470,7 @@ export const INITIAL_ACCOUNTS: ChartOfAccount[] = [
   
   // Pendapatan
   { id: 'acc-4101', code: '4101', name: 'Pendapatan Penjualan Antrasida', category: 'Pendapatan', normal_balance: 'Kredit', balance: 70616240 },
-  { id: 'acc-4102', code: '4102', name: 'Pendapatan Penjualan Agrodelta', category: 'Pendapatan', normal_balance: 'Kredit', balance: 0 },
+  { id: 'acc-4102', code: '4102', name: 'Pendapatan Penjualan Agrodelta', category: 'Pendapatan', normal_balance: 'Kredit', balance: 20950000 },
   
   // HPP
   { id: 'acc-5101', code: '5101', name: 'HPP Produk / Bahan Baku', category: 'HPP', normal_balance: 'Debit', balance: 9701546 },
@@ -487,7 +487,7 @@ export const INITIAL_JOURNAL_ENTRIES: JournalEntry[] = [
     id: 'jrn-1',
     transaction_code: 'JRN/SMB/2026/0001',
     date: '2026-07-01',
-    description: 'Setoran Saldo Awal Pembukuan Operasional SMB',
+    description: 'Setoran Saldo Awal Pembukuan Operasional SMB (Antrasida)',
     brand_id: 'brand-antrasida',
     is_automated: false,
     items: [
@@ -502,7 +502,7 @@ export const INITIAL_JOURNAL_ENTRIES: JournalEntry[] = [
     id: 'jrn-2',
     transaction_code: 'JRN/SMB/2026/0002',
     date: '2026-07-16',
-    description: 'Pencatatan Jurnal Otomatis Penjualan Harian & HPP (Juli 2026)',
+    description: 'Pencatatan Jurnal Otomatis Penjualan Harian & HPP Antrasida (Juli 2026)',
     brand_id: 'brand-antrasida',
     is_automated: true,
     items: [
@@ -512,6 +512,36 @@ export const INITIAL_JOURNAL_ENTRIES: JournalEntry[] = [
       { account_code: '5101', account_name: 'HPP Produk / Bahan Baku', debit: 9701546, credit: 0 },
       { account_code: '4101', account_name: 'Pendapatan Penjualan Antrasida', debit: 0, credit: 70616240 },
       { account_code: '1301', account_name: 'Persediaan Bahan Baku & Kemasan', debit: 0, credit: 9701546 }
+    ]
+  },
+  {
+    id: 'jrn-3',
+    transaction_code: 'JRN/AGRO/2026/0001',
+    date: '2026-07-02',
+    description: 'Setoran Modal & Alokasi Anggaran Operasional Unit Agrodelta',
+    brand_id: 'brand-agrodelta',
+    is_automated: false,
+    items: [
+      { account_code: '1102', account_name: 'Kas Bank Mandiri', debit: 15000000, credit: 0 },
+      { account_code: '1104', account_name: 'Piutang Top Up Iklan (Agrodelta)', debit: 1110000, credit: 0 },
+      { account_code: '1301', account_name: 'Persediaan Bahan Baku & Kemasan', debit: 8500000, credit: 0 },
+      { account_code: '3101', account_name: 'Ekuitas Modal SMB', debit: 0, credit: 24610000 }
+    ]
+  },
+  {
+    id: 'jrn-4',
+    transaction_code: 'JRN/AGRO/2026/0002',
+    date: '2026-07-15',
+    description: 'Jurnal Otomatis Realisasi Penjualan & Beban Distribusi Agrodelta',
+    brand_id: 'brand-agrodelta',
+    is_automated: true,
+    items: [
+      { account_code: '1103', account_name: 'Piutang Marketplace (Saldo Tertahan)', debit: 14850000, credit: 0 },
+      { account_code: '6101', account_name: 'Biaya Admin & Pemprosesan Marketplace', debit: 2980000, credit: 0 },
+      { account_code: '6102', account_name: 'Beban Ongkir & Affiliasi', debit: 3120000, credit: 0 },
+      { account_code: '5101', account_name: 'HPP Produk / Bahan Baku', debit: 4250000, credit: 0 },
+      { account_code: '4102', account_name: 'Pendapatan Penjualan Agrodelta', debit: 0, credit: 20950000 },
+      { account_code: '1301', account_name: 'Persediaan Bahan Baku & Kemasan', debit: 0, credit: 4250000 }
     ]
   }
 ];
@@ -554,6 +584,44 @@ export const INITIAL_INVOICES: Invoice[] = [
     total: 8991000,
     status: 'Unpaid',
     notes: 'Jatuh tempo 14 hari kerja'
+  },
+  {
+    id: 'inv-3',
+    invoice_number: 'INV/AGRO/2026/001',
+    type: 'PENJUALAN',
+    date: '2026-07-14',
+    due_date: '2026-07-28',
+    customer_vendor: 'Koperasi Tani Nusantara Agro (Mitra Agrodelta)',
+    brand_id: 'brand-agrodelta',
+    items: [
+      { sku: 'AGR-NUT-PUP1', name: 'Agrodelta - Pupuk Nutrisi Daun & Buah Organik (5 L)', quantity: 30, unit_price: 245000, total: 7350000 },
+      { sku: 'AGR-BIO-STI1', name: 'Agrodelta - Biostimulan Akar Organik Plus (1 L)', quantity: 25, unit_price: 115000, total: 2875000 }
+    ],
+    subtotal: 10225000,
+    tax: 1124750, // PPN 11%
+    discount: 225000,
+    total: 11124750,
+    status: 'Paid',
+    notes: 'Lunas ditransfer ke Kas Bank Mandiri Agrodelta'
+  },
+  {
+    id: 'inv-4',
+    invoice_number: 'INV/AGRO/2026/002',
+    type: 'PEMBELIAN',
+    date: '2026-07-19',
+    due_date: '2026-08-02',
+    customer_vendor: 'PT Agro Industri Bahan Baku Abadi (Supplier Pupuk Dasar)',
+    brand_id: 'brand-agrodelta',
+    items: [
+      { sku: 'RAW-ORG-NIT', name: 'Bahan Baku Nitrogen Organik Cair (Jerigen 20 L)', quantity: 50, unit_price: 180000, total: 9000000 },
+      { sku: 'RAW-BIO-ENZ', name: 'Enzim Fermentasi Hayati Super (Pack 5 kg)', quantity: 20, unit_price: 350000, total: 7000000 }
+    ],
+    subtotal: 16000000,
+    tax: 1760000,
+    discount: 500000,
+    total: 17260000,
+    status: 'Unpaid',
+    notes: 'Pembayaran termin 1 atas pengiriman bahan baku pupuk'
   }
 ];
 

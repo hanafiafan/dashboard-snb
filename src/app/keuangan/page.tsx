@@ -352,10 +352,20 @@ export default function ManajemenKeuanganPage() {
                     <td className="py-3 px-4 font-black text-amber-500 text-sm">Rp {item.amount.toLocaleString("id-ID")}</td>
                     <td className="py-3 px-4 text-slate-600 dark:text-slate-400">{item.notes}</td>
                     <td className="py-3 px-4 text-center">
-                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] ${
-                        item.status === "Lunas" ? "bg-emerald-500/15 text-emerald-500" : "bg-amber-500/15 text-amber-500"
+                      <span className={`px-2.5 py-1 rounded-full font-bold text-[10px] inline-flex items-center gap-1 ${
+                        item.status === "Lunas" ? "bg-emerald-500/15 text-emerald-500 border border-emerald-500/30" : "bg-amber-500/15 text-amber-500 border border-amber-500/30"
                       }`}>
-                        {item.status === "Lunas" ? "✅ Lunas" : "⏳ Pending"}
+                        {item.status === "Lunas" ? (
+                          <>
+                            <CheckCircle2 className="w-3 h-3 text-emerald-500" />
+                            <span>Lunas</span>
+                          </>
+                        ) : (
+                          <>
+                            <Clock className="w-3 h-3 text-amber-500" />
+                            <span>Pending</span>
+                          </>
+                        )}
                       </span>
                     </td>
                     <td className="py-3 px-6 text-center">

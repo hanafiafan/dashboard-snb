@@ -217,8 +217,8 @@ export default function NeracaPage() {
               <div>
                 <h4 className="font-extrabold text-base">
                   {balanceSheet.isBalanced
-                    ? "Validasi Keseimbangan Akuntansi: SEIMBANG (BALANCED ✅)"
-                    : "Validasi Keseimbangan Akuntansi: TIDAK SEIMBANG ❌"}
+                    ? "Validasi Keseimbangan Akuntansi: SEIMBANG (BALANCED)"
+                    : "Validasi Keseimbangan Akuntansi: TIDAK SEIMBANG"}
                 </h4>
                 <p className="text-xs mt-0.5 opacity-90">
                   Total Aset (Rp {balanceSheet.totalAssets.toLocaleString("id-ID")}) = Total Kewajiban & Ekuitas (Rp{" "}
@@ -401,7 +401,7 @@ export default function NeracaPage() {
                 onChange={(e) => setSelectedCategory(e.target.value)}
                 className="px-3.5 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 text-sm font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
               >
-                <option value="all">📁 Semua Kategori</option>
+                <option value="all">Semua Kategori</option>
                 <option value="Aset Lancar">Aset Lancar</option>
                 <option value="Aset Tetap">Aset Tetap</option>
                 <option value="Kewajiban">Kewajiban</option>

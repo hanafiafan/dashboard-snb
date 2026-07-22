@@ -12,9 +12,11 @@ import {
   Clock,
   Eye,
   Trash2,
-  X,
   Sprout,
   Check,
+  TrendingUp,
+  Layers,
+  X,
 } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
 import { Invoice, InvoiceItem } from "@/types";
@@ -194,9 +196,9 @@ export default function FakturPage() {
             onChange={(e) => setSelectedType(e.target.value)}
             className="px-3.5 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 text-sm font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="all">⚡ Semua Jenis Faktur</option>
-            <option value="PENJUALAN">📈 Faktur Penjualan (Sales Invoice)</option>
-            <option value="PEMBELIAN">📦 Faktur Pembelian (Purchase Invoice)</option>
+            <option value="all">Semua Jenis Faktur</option>
+            <option value="PENJUALAN">Faktur Penjualan (Sales Invoice)</option>
+            <option value="PEMBELIAN">Faktur Pembelian (Purchase Invoice)</option>
           </select>
 
           <select
@@ -204,11 +206,11 @@ export default function FakturPage() {
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="px-3.5 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 text-sm font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="all">🏷️ Semua Status Pembayaran</option>
-            <option value="Paid">✅ Lunas (Paid)</option>
-            <option value="Unpaid">⏳ Belum Bayar (Unpaid)</option>
-            <option value="Overdue">🚨 Jatuh Tempo (Overdue)</option>
-            <option value="Draft">📝 Draft</option>
+            <option value="all">Semua Status Pembayaran</option>
+            <option value="Paid">Lunas (Paid)</option>
+            <option value="Unpaid">Belum Bayar (Unpaid)</option>
+            <option value="Overdue">Jatuh Tempo (Overdue)</option>
+            <option value="Draft">Draft</option>
           </select>
         </div>
       </div>
@@ -232,8 +234,18 @@ export default function FakturPage() {
                     <span className="font-mono text-xs font-bold text-indigo-600 dark:text-indigo-400 block">
                       {inv.invoice_number}
                     </span>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-0.5 block">
-                      {inv.type === "PENJUALAN" ? "📈 Faktur Penjualan" : "📦 Faktur Pembelian"}
+                    <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1 flex items-center gap-1.5">
+                      {inv.type === "PENJUALAN" ? (
+                        <>
+                          <TrendingUp className="w-3.5 h-3.5 text-emerald-500 inline" />
+                          <span>Faktur Penjualan</span>
+                        </>
+                      ) : (
+                        <>
+                          <Layers className="w-3.5 h-3.5 text-amber-500 inline" />
+                          <span>Faktur Pembelian</span>
+                        </>
+                      )}
                     </span>
                   </div>
                   <span
@@ -529,8 +541,8 @@ export default function FakturPage() {
                     onChange={(e) => setFormType(e.target.value as "PENJUALAN" | "PEMBELIAN")}
                     className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
-                    <option value="PENJUALAN">📈 Faktur Penjualan (Sales)</option>
-                    <option value="PEMBELIAN">📦 Faktur Pembelian (Purchase)</option>
+                    <option value="PENJUALAN">Faktur Penjualan (Sales)</option>
+                    <option value="PEMBELIAN">Faktur Pembelian (Purchase)</option>
                   </select>
                 </div>
                 <div>

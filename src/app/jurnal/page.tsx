@@ -284,7 +284,7 @@ export default function JurnalUmumPage() {
             onChange={(e) => setSelectedAccountCode(e.target.value)}
             className="px-3.5 py-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 text-sm font-semibold text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
           >
-            <option value="all">📁 Semua Akun (Jurnal Umum Gabungan)</option>
+            <option value="all">Semua Akun (Jurnal Umum Gabungan)</option>
             {accounts.map((acc) => (
               <option key={acc.code} value={acc.code}>
                 [{acc.code}] {acc.name} ({acc.category})
@@ -518,12 +518,12 @@ export default function JurnalUmumPage() {
                     </div>
                     <div>
                       {formTotals.isBalanced ? (
-                        <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                          ✅ Seimbang (Balanced)
+                        <span className="px-2.5 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center gap-1.5 font-bold">
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500" /> Seimbang (Balanced)
                         </span>
                       ) : (
-                        <span className="px-2.5 py-1 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30">
-                          ❌ Selisih: Rp {Math.abs(formTotals.debit - formTotals.credit).toLocaleString("id-ID")}
+                        <span className="px-2.5 py-1 rounded-full bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 flex items-center gap-1.5 font-bold">
+                          <AlertCircle className="w-4 h-4 text-rose-500" /> Selisih: Rp {Math.abs(formTotals.debit - formTotals.credit).toLocaleString("id-ID")}
                         </span>
                       )}
                     </div>

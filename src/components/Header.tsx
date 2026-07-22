@@ -85,7 +85,7 @@ export function Header() {
             <option value="7 Hari Terakhir" className="bg-slate-900 text-white font-semibold">7 Hari Terakhir</option>
             <option value="30 Hari Terakhir" className="bg-slate-900 text-white font-semibold">30 Hari Terakhir</option>
             <option value="Semua Waktu" className="bg-slate-900 text-white font-semibold">Semua Waktu</option>
-            <option value="Custom Rentang Tanggal" className="bg-slate-900 text-emerald-400 font-extrabold">📅 Custom Rentang Tanggal</option>
+            <option value="Custom Rentang Tanggal" className="bg-slate-900 text-emerald-400 font-extrabold">Custom Rentang Tanggal</option>
           </select>
         </div>
 

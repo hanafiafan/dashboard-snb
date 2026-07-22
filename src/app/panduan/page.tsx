@@ -25,13 +25,13 @@ export default function PanduanSistemPage() {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const tabs = [
-    { id: "workflow", label: "🚀 Alur Kerja Harian Admin", icon: TrendingUp },
-    { id: "penjualan", label: "🛒 Penjualan & Kalkulator Beban", icon: Calculator },
-    { id: "akuntansi", label: "⚖️ Akuntansi ERP (Jurnal & Neraca)", icon: Scale },
-    { id: "faktur", label: "📄 Faktur Studio & Cetak Dokumen", icon: FileText },
-    { id: "hpp_keuangan", label: "📦 Katalog HPP & Keuangan", icon: Layers },
-    { id: "custom_period", label: "📅 Filter Tanggal Custom", icon: Calendar },
-    { id: "faq", label: "❓ Troubleshooting & FAQ", icon: HelpCircle },
+    { id: "workflow", label: "Alur Kerja Harian Admin", icon: TrendingUp },
+    { id: "penjualan", label: "Penjualan & Kalkulator Beban", icon: Calculator },
+    { id: "akuntansi", label: "Akuntansi ERP (Jurnal & Neraca)", icon: Scale },
+    { id: "faktur", label: "Faktur Studio & Cetak Dokumen", icon: FileText },
+    { id: "hpp_keuangan", label: "Katalog HPP & Keuangan", icon: Layers },
+    { id: "custom_period", label: "Filter Tanggal Custom", icon: Calendar },
+    { id: "faq", label: "Troubleshooting & FAQ", icon: HelpCircle },
   ];
 
   return (
@@ -149,7 +149,7 @@ export default function PanduanSistemPage() {
                   </span>
                   <h3 className="font-bold text-white text-base">Periksa Jurnal Otomatis</h3>
                   <p className="text-xs text-slate-400 leading-relaxed">
-                    Setiap penjualan otomatis mencetak pembukuan *Double-Entry* di menu **Jurnal Umum**. Cek apakah indikator menunjukkan status **SEIMBANG (Balanced ✅)**.
+                    Setiap penjualan otomatis mencetak pembukuan *Double-Entry* di menu **Jurnal Umum**. Cek apakah indikator menunjukkan status **SEIMBANG (Balanced)**.
                   </p>
                 </div>
 
@@ -238,7 +238,7 @@ export default function PanduanSistemPage() {
                 <div className="flex items-center gap-3">
                   <AlertCircle className="w-5 h-5 text-amber-400 shrink-0" />
                   <span className="text-xs text-slate-300 font-medium">
-                    **Catatan Koreksi**: Jika Anda salah memasukkan angka, klik ikon **Edit (Pensil ✏️)** pada baris tabel bersangkutan. Seluruh angka beban otomatis dihitung ulang secara akurat saat Anda memperbarui data.
+                    **Catatan Koreksi**: Jika Anda salah memasukkan angka, klik ikon **Edit (Pensil)** pada baris tabel bersangkutan. Seluruh angka beban otomatis dihitung ulang secara akurat saat Anda memperbarui data.
                   </span>
                 </div>
               </div>
@@ -298,7 +298,7 @@ export default function PanduanSistemPage() {
                   <li>Masukkan deskripsi transaksi (*misal: Biaya Servis Laptop Kantor*).</li>
                   <li>Pada baris pertama, pilih Akun COA Debit (*misal `6104 Gaji & Servis`*) dan masukkan angka di kolom Debit.</li>
                   <li>Pada baris kedua, pilih Akun COA Kredit (*misal `1101 Kas Bank BCA`*) dan masukkan angka yang sama di kolom Kredit.</li>
-                  <li>Pastikan indikator bawah menunjukkan **SEIMBANG (Balanced ✅)** sebelum mengklik tombol **Simpan Jurnal & Perbarui Saldo**.</li>
+                  <li>Pastikan indikator bawah menunjukkan **SEIMBANG (Balanced)** sebelum mengklik tombol **Simpan Jurnal & Perbarui Saldo**.</li>
                 </ol>
               </div>
             </div>
@@ -346,7 +346,7 @@ export default function PanduanSistemPage() {
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">2</span>
-                      <span>Pada pop-up studio pratinjau, klik tombol biru **🖨️ Cetak / Save PDF**.</span>
+                      <span>Pada pop-up studio pratinjau, klik tombol biru **Cetak / Save PDF**.</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded bg-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold">3</span>
@@ -373,14 +373,18 @@ export default function PanduanSistemPage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-slate-800/60 p-6 rounded-2xl border border-slate-700/60 space-y-3">
-                  <h3 className="font-bold text-white text-base">📦 Katalog & HPP Produk (`/hpp`)</h3>
+                  <h3 className="font-bold text-white text-base flex items-center gap-2">
+                    <Layers className="w-4 h-4 text-emerald-400 inline" /> Katalog & HPP Produk (`/hpp`)
+                  </h3>
                   <p className="text-xs text-slate-300 leading-relaxed">
                     Halaman ini memuat daftar produk resmi (*Busuk Akar, Anti Semut, Pembasmi Nyamuk Tanam, dll.*) berserta Harga Jual dan Harga Pokok Penjualan (HPP). Anda dapat memanfaatkan **Simulasi Kalkulator Margin Produk** di bagian atas untuk menguji berapa laba bersih yang didapat jika memberikan diskon tertentu saat promosi *Live Streaming*.
                   </p>
                 </div>
 
                 <div className="bg-slate-800/60 p-6 rounded-2xl border border-slate-700/60 space-y-3">
-                  <h3 className="font-bold text-white text-base">💰 Manajemen Keuangan (`/keuangan`)</h3>
+                  <h3 className="font-bold text-white text-base flex items-center gap-2">
+                    <Calculator className="w-4 h-4 text-indigo-400 inline" /> Manajemen Keuangan (`/keuangan`)
+                  </h3>
                   <p className="text-xs text-slate-300 leading-relaxed">
                     Terdiri dari 4 tab penting yang diangkat dari sheet Excel SMB:
                   </p>
@@ -419,7 +423,7 @@ export default function PanduanSistemPage() {
                   </p>
                   <ol className="space-y-2 text-xs text-slate-300 list-decimal list-inside font-semibold bg-slate-900 p-4 rounded-xl border border-slate-800">
                     <li>Klik dropdown **Periode:** di pojok kanan atas Header.</li>
-                    <li>Pilih opsi paling bawah berlabel hijau **📅 Custom Rentang Tanggal**.</li>
+                    <li>Pilih opsi paling bawah berlabel hijau **Custom Rentang Tanggal**.</li>
                     <li>Secara otomatis akan muncul dua kolom input kalender: **Dari [YYYY-MM-DD]** dan **s/d [YYYY-MM-DD]**.</li>
                     <li>Pilih tanggal mulai dan tanggal akhir yang Anda inginkan. Seluruh laporan langsung menyesuaikan!</li>
                   </ol>

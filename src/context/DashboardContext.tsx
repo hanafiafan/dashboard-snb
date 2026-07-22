@@ -205,7 +205,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     };
     setJournalEntries((prev) => [autoJournal, ...prev]);
 
-    showToast(`✅ Penjualan tanggal ${raw.date} & Jurnal Otomatis berhasil dicatat!`);
+    showToast(`Data penjualan tanggal ${raw.date} & Jurnal Otomatis berhasil dicatat`);
 
     if (isSupabaseConfigured && supabase) {
       await supabase.from("daily_sales").insert([newSale]);
@@ -238,8 +238,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         };
       })
     );
-    showToast(`✏️ Data transaksi penjualan berhasil diperbarui!`);
-
+    showToast(`Data transaksi penjualan berhasil diperbarui`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("daily_sales").update(updated).eq("id", id);
     }
@@ -247,7 +246,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const deleteDailySale = async (id: string) => {
     setDailySales((prev) => prev.filter((item) => item.id !== id));
-    showToast(`🗑️ Data transaksi penjualan berhasil dihapus.`);
+    showToast(`Data transaksi penjualan berhasil dihapus`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("daily_sales").delete().eq("id", id);
     }
@@ -259,7 +258,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const addProduct = async (product: Omit<Product, "id">) => {
     const newProd: Product = { ...product, id: `prod-${Date.now()}` };
     setProducts((prev) => [...prev, newProd]);
-    showToast(`📦 Produk baru ${product.sku} berhasil ditambahkan ke katalog HPP!`);
+    showToast(`Produk baru ${product.sku} berhasil ditambahkan ke katalog HPP`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("products").insert([newProd]);
     }
@@ -267,7 +266,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const updateProduct = async (id: string, updated: Partial<Product>) => {
     setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updated } : p)));
-    showToast(`✨ Harga & HPP Produk berhasil diperbarui!`);
+    showToast(`Harga & HPP Produk berhasil diperbarui`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("products").update(updated).eq("id", id);
     }
@@ -275,7 +274,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
   const deleteProduct = async (id: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
-    showToast(`🗑️ Produk dihapus dari daftar katalog HPP.`);
+    showToast(`Produk dihapus dari daftar katalog HPP`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("products").delete().eq("id", id);
     }
@@ -293,7 +292,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       running_balance,
     };
     setCashFlow((prev) => [...prev, newCf]);
-    showToast(`💰 Transaksi kas '${item.description}' berhasil dicatat! Saldo kini Rp ${running_balance.toLocaleString("id-ID")}`);
+    showToast(`Transaksi kas '${item.description}' berhasil dicatat. Saldo kini Rp ${running_balance.toLocaleString("id-ID")}`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("cash_flow_ledger").insert([newCf]);
     }
@@ -309,7 +308,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         return { ...c, running_balance: currentBal };
       });
     });
-    showToast(`🗑️ Transaksi kas berhasil dihapus dari buku besar.`);
+    showToast(`Transaksi kas berhasil dihapus dari buku besar`);
     if (isSupabaseConfigured && supabase) {
       await supabase.from("cash_flow_ledger").delete().eq("id", id);
     }
@@ -321,39 +320,39 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const addRevenueWithdrawal = (item: Omit<RevenueWithdrawal, "id">) => {
     const newRw = { ...item, id: `rw-${Date.now()}` };
     setRevenueWithdrawals((prev) => [newRw, ...prev]);
-    showToast(`💸 Penarikan pendapatan Rp ${item.amount.toLocaleString("id-ID")} berhasil dicatat!`);
+    showToast(`Penarikan pendapatan Rp ${item.amount.toLocaleString("id-ID")} berhasil dicatat`);
   };
 
   const deleteRevenueWithdrawal = (id: string) => {
     setRevenueWithdrawals((prev) => prev.filter((item) => item.id !== id));
-    showToast(`🗑️ Data penarikan berhasil dihapus.`);
+    showToast(`Data penarikan berhasil dihapus`);
   };
 
   const addInventoryExpenditure = (item: Omit<InventoryExpenditure, "id">) => {
     const newIe = { ...item, id: `ie-${Date.now()}` };
     setInventoryExpenditures((prev) => [newIe, ...prev]);
-    showToast(`📦 Pengeluaran barang Rp ${item.amount.toLocaleString("id-ID")} berhasil dicatat!`);
+    showToast(`Pengeluaran barang Rp ${item.amount.toLocaleString("id-ID")} berhasil dicatat`);
   };
 
   const deleteInventoryExpenditure = (id: string) => {
     setInventoryExpenditures((prev) => prev.filter((item) => item.id !== id));
-    showToast(`🗑️ Data pengeluaran barang dihapus.`);
+    showToast(`Data pengeluaran barang dihapus`);
   };
 
   const updateExpenseBudget = (id: string, realized: number) => {
     setExpenseBudgets((prev) => prev.map((b) => (b.id === id ? { ...b, realized_amount: realized } : b)));
-    showToast(`📊 Realisasi anggaran berhasil diperbarui!`);
+    showToast(`Realisasi anggaran berhasil diperbarui`);
   };
 
   const addAccountReceivable = (item: Omit<AccountReceivable, "id">) => {
     const newAr = { ...item, id: `ar-${Date.now()}` };
     setAccountsReceivable((prev) => [newAr, ...prev]);
-    showToast(`📝 Piutang baru kepada '${item.debtor_source}' berhasil dicatat!`);
+    showToast(`Piutang baru kepada '${item.debtor_source}' berhasil dicatat`);
   };
 
   const updateAccountReceivableStatus = (id: string, status: "Pending" | "Lunas" | "Dicicil") => {
     setAccountsReceivable((prev) => prev.map((ar) => (ar.id === id ? { ...ar, status } : ar)));
-    showToast(`🏷️ Status piutang diubah menjadi '${status}'.`);
+    showToast(`Status piutang diubah menjadi '${status}'`);
   };
 
   // ==========================

@@ -10,8 +10,9 @@ import {
   Search,
   CheckCircle2,
   AlertCircle,
-  X,
   FileSpreadsheet,
+  ArrowRight,
+  X,
 } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
 import { DailySale } from "@/types";
@@ -354,7 +355,10 @@ export default function PenjualanHarianPage() {
                   <td className="py-3.5 px-3 text-indigo-500">Rp {summary.totalOmsetFin.toLocaleString("id-ID")}</td>
                   <td className="py-3.5 px-3">{summary.totalOrders}</td>
                   <td colSpan={6} className="py-3.5 px-3 text-right text-slate-400 font-normal italic">
-                    (Kalkulasi Akumulasi Beban) 👉
+                    <div className="flex items-center justify-end gap-1.5">
+                      <span>(Kalkulasi Akumulasi Beban)</span>
+                      <ArrowRight className="w-3.5 h-3.5 text-slate-400" />
+                    </div>
                   </td>
                   <td className="py-3.5 px-3 text-rose-500">Rp {summary.totalExpense.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</td>
                   <td className="py-3.5 px-3 text-emerald-500">Rp {summary.totalMargin.toLocaleString("id-ID", { maximumFractionDigits: 0 })}</td>

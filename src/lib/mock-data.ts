@@ -7,7 +7,10 @@ import {
   InventoryExpenditure,
   ExpenseBudget,
   AccountReceivable,
-  ProfitLossSummary
+  ProfitLossSummary,
+  ChartOfAccount,
+  JournalEntry,
+  Invoice
 } from '@/types';
 
 export const INITIAL_BRANDS: Brand[] = [
@@ -442,3 +445,115 @@ export const INITIAL_PROFIT_LOSS: ProfitLossSummary = {
   npm_target: 7398583.33,
   npm_realization: 4564073.49
 };
+
+// ==========================================
+// SEED ACCURATE ONLINE ERP DATA
+// ==========================================
+
+export const INITIAL_ACCOUNTS: ChartOfAccount[] = [
+  // Aset Lancar
+  { id: 'acc-1101', code: '1101', name: 'Kas Bank BCA', category: 'Aset Lancar', normal_balance: 'Debit', balance: 34409827 },
+  { id: 'acc-1102', code: '1102', name: 'Kas Bank Mandiri', category: 'Aset Lancar', normal_balance: 'Debit', balance: 10000000 },
+  { id: 'acc-1103', code: '1103', name: 'Piutang Marketplace (Saldo Tertahan)', category: 'Aset Lancar', normal_balance: 'Debit', balance: 12948257 },
+  { id: 'acc-1104', code: '1104', name: 'Piutang Top Up Iklan (Agrodelta)', category: 'Aset Lancar', normal_balance: 'Debit', balance: 1110000 },
+  { id: 'acc-1301', code: '1301', name: 'Persediaan Bahan Baku & Kemasan', category: 'Aset Lancar', normal_balance: 'Debit', balance: 18259474 },
+  
+  // Aset Tetap
+  { id: 'acc-1501', code: '1501', name: 'Peralatan Operasional & Gudang', category: 'Aset Tetap', normal_balance: 'Debit', balance: 15000000 },
+  
+  // Kewajiban
+  { id: 'acc-2101', code: '2101', name: 'Hutang Usaha / Supplier', category: 'Kewajiban', normal_balance: 'Kredit', balance: 8500000 },
+  
+  // Ekuitas
+  { id: 'acc-3101', code: '3101', name: 'Ekuitas Modal SMB', category: 'Ekuitas', normal_balance: 'Kredit', balance: 78663484.51 },
+  { id: 'acc-3102', code: '3102', name: 'Laba Periode Berjalan', category: 'Ekuitas', normal_balance: 'Kredit', balance: 4564073.49 },
+  
+  // Pendapatan
+  { id: 'acc-4101', code: '4101', name: 'Pendapatan Penjualan Antrasida', category: 'Pendapatan', normal_balance: 'Kredit', balance: 70616240 },
+  { id: 'acc-4102', code: '4102', name: 'Pendapatan Penjualan Agrodelta', category: 'Pendapatan', normal_balance: 'Kredit', balance: 0 },
+  
+  // HPP
+  { id: 'acc-5101', code: '5101', name: 'HPP Produk / Bahan Baku', category: 'HPP', normal_balance: 'Debit', balance: 9701546 },
+  
+  // Beban Operasional
+  { id: 'acc-6101', code: '6101', name: 'Biaya Admin & Pemprosesan Marketplace', category: 'Beban Operasional', normal_balance: 'Debit', balance: 10656678.68 },
+  { id: 'acc-6102', code: '6102', name: 'Beban Ongkir & Affiliasi', category: 'Beban Operasional', normal_balance: 'Debit', balance: 12446532.83 },
+  { id: 'acc-6103', code: '6103', name: 'Beban Iklan (Ads Spend)', category: 'Beban Operasional', normal_balance: 'Debit', balance: 22137302 },
+  { id: 'acc-6104', code: '6104', name: 'Gaji, Servis & Operasional Lainnya', category: 'Beban Operasional', normal_balance: 'Debit', balance: 3639000 }
+];
+
+export const INITIAL_JOURNAL_ENTRIES: JournalEntry[] = [
+  {
+    id: 'jrn-1',
+    transaction_code: 'JRN/SMB/2026/0001',
+    date: '2026-07-01',
+    description: 'Setoran Saldo Awal Pembukuan Operasional SMB',
+    brand_id: 'brand-antrasida',
+    is_automated: false,
+    items: [
+      { account_code: '1101', account_name: 'Kas Bank BCA', debit: 34409827, credit: 0 },
+      { account_code: '1102', account_name: 'Kas Bank Mandiri', debit: 10000000, credit: 0 },
+      { account_code: '1301', account_name: 'Persediaan Bahan Baku & Kemasan', debit: 18259474, credit: 0 },
+      { account_code: '1501', account_name: 'Peralatan Operasional & Gudang', debit: 15000000, credit: 0 },
+      { account_code: '3101', account_name: 'Ekuitas Modal SMB', debit: 0, credit: 77669301 }
+    ]
+  },
+  {
+    id: 'jrn-2',
+    transaction_code: 'JRN/SMB/2026/0002',
+    date: '2026-07-16',
+    description: 'Pencatatan Jurnal Otomatis Penjualan Harian & HPP (Juli 2026)',
+    brand_id: 'brand-antrasida',
+    is_automated: true,
+    items: [
+      { account_code: '1103', account_name: 'Piutang Marketplace (Saldo Tertahan)', debit: 57667983, credit: 0 },
+      { account_code: '6101', account_name: 'Biaya Admin & Pemprosesan Marketplace', debit: 10656678.68, credit: 0 },
+      { account_code: '6102', account_name: 'Beban Ongkir & Affiliasi', debit: 12446532.83, credit: 0 },
+      { account_code: '5101', account_name: 'HPP Produk / Bahan Baku', debit: 9701546, credit: 0 },
+      { account_code: '4101', account_name: 'Pendapatan Penjualan Antrasida', debit: 0, credit: 70616240 },
+      { account_code: '1301', account_name: 'Persediaan Bahan Baku & Kemasan', debit: 0, credit: 9701546 }
+    ]
+  }
+];
+
+export const INITIAL_INVOICES: Invoice[] = [
+  {
+    id: 'inv-1',
+    invoice_number: 'INV/SMB/2026/001',
+    type: 'PENJUALAN',
+    date: '2026-07-16',
+    due_date: '2026-07-30',
+    customer_vendor: 'CV Mitra Distributor Utama (Distributor Antrasida)',
+    brand_id: 'brand-antrasida',
+    items: [
+      { sku: 'ATR-FNG-BAK1', name: 'Antrasida - Fungisida Busuk Akar (1 Liter)', quantity: 50, unit_price: 139000, total: 6950000 },
+      { sku: 'ATR-INS-ASM1', name: 'Antrasida - Insektisida Anti Semut & Kutu (500 ml)', quantity: 40, unit_price: 71900, total: 2876000 }
+    ],
+    subtotal: 9826000,
+    tax: 1080860, // PPN 11%
+    discount: 500000,
+    total: 10406860,
+    status: 'Paid',
+    notes: 'Pembayaran diterima penuh ke Kas Bank BCA'
+  },
+  {
+    id: 'inv-2',
+    invoice_number: 'INV/SMB/2026/002',
+    type: 'PEMBELIAN',
+    date: '2026-07-18',
+    due_date: '2026-08-01',
+    customer_vendor: 'PT Kemasan Nusantara Makmur (Supplier Botol & Kardus)',
+    brand_id: 'brand-antrasida',
+    items: [
+      { sku: 'PKG-BTL-1L', name: 'Botol HDPE 1 Liter Tutup Segel (Bahan Baku Packaging)', quantity: 2000, unit_price: 3200, total: 6400000 },
+      { sku: 'PKG-BOX-500', name: 'Kardus Master Box Kraft (Kemasan 24 Botol)', quantity: 200, unit_price: 8500, total: 1700000 }
+    ],
+    subtotal: 8100000,
+    tax: 891000,
+    discount: 0,
+    total: 8991000,
+    status: 'Unpaid',
+    notes: 'Jatuh tempo 14 hari kerja'
+  }
+];
+

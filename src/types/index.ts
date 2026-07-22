@@ -113,3 +113,59 @@ export interface ProfitLossSummary {
   npm_target: number;
   npm_realization: number;
 }
+
+// ==========================================
+// ACCURATE ONLINE ERP & ACCOUNTING TYPES
+// ==========================================
+
+export interface ChartOfAccount {
+  id: string;
+  code: string; // mis: "1101", "4101"
+  name: string; // mis: "Kas Bank BCA", "Pendapatan Penjualan"
+  category: 'Aset Lancar' | 'Aset Tetap' | 'Kewajiban' | 'Ekuitas' | 'Pendapatan' | 'HPP' | 'Beban Operasional';
+  normal_balance: 'Debit' | 'Kredit';
+  balance: number;
+}
+
+export interface JournalItem {
+  account_code: string;
+  account_name: string;
+  debit: number;
+  credit: number;
+}
+
+export interface JournalEntry {
+  id: string;
+  transaction_code: string; // mis: "JRN/SMB/2026/0001"
+  date: string;
+  description: string;
+  brand_id?: string | null;
+  items: JournalItem[];
+  is_automated?: boolean;
+}
+
+export interface InvoiceItem {
+  sku: string;
+  name: string;
+  quantity: number;
+  unit_price: number;
+  total: number;
+}
+
+export interface Invoice {
+  id: string;
+  invoice_number: string; // mis: "INV/SMB/2026/001"
+  type: 'PENJUALAN' | 'PEMBELIAN';
+  date: string;
+  due_date: string;
+  customer_vendor: string;
+  brand_id: string;
+  items: InvoiceItem[];
+  subtotal: number;
+  tax: number;
+  discount: number;
+  total: number;
+  status: 'Draft' | 'Unpaid' | 'Paid' | 'Overdue';
+  notes?: string | null;
+}
+

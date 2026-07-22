@@ -11,8 +11,8 @@ const fontSans = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Dashboard Operasional SNB — Antrasida & Agrodelta",
-  description: "Sistem Manajemen Operasional Harian, Penjualan, HPP, Arus Kas, dan Laba Rugi SNB",
+  title: "Dashboard Operasional SMB — Antrasida & Agrodelta",
+  description: "Sistem Manajemen Operasional Harian, Penjualan, HPP, Arus Kas, dan Laba Rugi SMB",
 };
 
 export default function RootLayout({

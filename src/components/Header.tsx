@@ -11,6 +11,12 @@ export function Header() {
     setSelectedBrandId,
     selectedPeriod,
     setSelectedPeriod,
+    customStartDate,
+    setCustomStartDate,
+    customEndDate,
+    setCustomEndDate,
+    isCustomPeriod,
+    setIsCustomPeriod,
     toastMessage,
   } = useDashboard();
 
@@ -55,24 +61,56 @@ export function Header() {
       </div>
 
       {/* Period Selector & Notifications */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         {/* Period Dropdown */}
         <div className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800/80 px-3.5 py-2 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm text-sm">
           <Calendar className="w-4 h-4 text-emerald-500" />
           <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Periode:</span>
           <select
             value={selectedPeriod}
-            onChange={(e) => setSelectedPeriod(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSelectedPeriod(val);
+              if (val === "Custom Rentang Tanggal") {
+                setIsCustomPeriod(true);
+              } else {
+                setIsCustomPeriod(false);
+              }
+            }}
             className="bg-transparent font-bold text-slate-800 dark:text-slate-100 text-xs focus:outline-none cursor-pointer"
           >
-            <option value="Juli 2026" className="bg-white dark:bg-slate-900">Juli 2026 (Aktual)</option>
-            <option value="25 MEI - 25 JUN" className="bg-white dark:bg-slate-900">25 MEI - 25 JUN (Forecast)</option>
-            <option value="Agustus 2026" className="bg-white dark:bg-slate-900">Agustus 2026</option>
+            <option value="Juli 2026" className="bg-slate-900 text-white">Juli 2026 (Aktual)</option>
+            <option value="Juni 2026" className="bg-slate-900 text-white">Juni 2026</option>
+            <option value="25 MEI - 25 JUN" className="bg-slate-900 text-white">25 MEI - 25 JUN (Forecast)</option>
+            <option value="7 Hari Terakhir" className="bg-slate-900 text-white">7 Hari Terakhir</option>
+            <option value="30 Hari Terakhir" className="bg-slate-900 text-white">30 Hari Terakhir</option>
+            <option value="Semua Waktu" className="bg-slate-900 text-white">Semua Waktu</option>
+            <option value="Custom Rentang Tanggal" className="bg-slate-900 text-white font-extrabold text-emerald-400">📅 Custom Rentang Tanggal</option>
           </select>
         </div>
 
+        {/* Custom Date Picker Inputs when Custom Period selected */}
+        {isCustomPeriod && (
+          <div className="flex items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-emerald-500/50 shadow-md text-xs animate-fadeIn">
+            <span className="text-slate-400 font-semibold text-[11px]">Dari:</span>
+            <input
+              type="date"
+              value={customStartDate}
+              onChange={(e) => setCustomStartDate(e.target.value)}
+              className="bg-slate-800 text-emerald-400 font-bold px-2 py-1 rounded border border-slate-700 focus:outline-none focus:border-emerald-500 text-[11px] cursor-pointer"
+            />
+            <span className="text-slate-400 font-semibold text-[11px]">s/d</span>
+            <input
+              type="date"
+              value={customEndDate}
+              onChange={(e) => setCustomEndDate(e.target.value)}
+              className="bg-slate-800 text-emerald-400 font-bold px-2 py-1 rounded border border-slate-700 focus:outline-none focus:border-emerald-500 text-[11px] cursor-pointer"
+            />
+          </div>
+        )}
+
         {/* Live Status indicator */}
-        <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold shadow-sm">
+        <div className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-xs font-semibold shadow-sm shrink-0">
           <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
           <span>Live Real-time Ops</span>
         </div>

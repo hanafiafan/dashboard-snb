@@ -11,6 +11,9 @@ import {
   ExpenseBudget,
   AccountReceivable,
   ProfitLossSummary,
+  ChartOfAccount,
+  JournalEntry,
+  Invoice,
 } from "@/types";
 import {
   INITIAL_BRANDS,
@@ -22,6 +25,9 @@ import {
   INITIAL_EXPENSE_BUDGETS,
   INITIAL_ACCOUNTS_RECEIVABLE,
   INITIAL_PROFIT_LOSS,
+  INITIAL_ACCOUNTS,
+  INITIAL_JOURNAL_ENTRIES,
+  INITIAL_INVOICES,
 } from "@/lib/mock-data";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
@@ -31,6 +37,12 @@ interface DashboardContextType {
   setSelectedBrandId: (id: string) => void;
   selectedPeriod: string; // mis. 'Juli 2026'
   setSelectedPeriod: (period: string) => void;
+  customStartDate: string;
+  setCustomStartDate: (date: string) => void;
+  customEndDate: string;
+  setCustomEndDate: (date: string) => void;
+  isCustomPeriod: boolean;
+  setIsCustomPeriod: (isCustom: boolean) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   
@@ -66,6 +78,14 @@ interface DashboardContextType {
   
   profitLossSummary: ProfitLossSummary;
   
+  // Accurate Online Accounting State & CRUD
+  accounts: ChartOfAccount[];
+  journalEntries: JournalEntry[];
+  addJournalEntry: (entry: Omit<JournalEntry, "id" | "transaction_code">) => void;
+  invoices: Invoice[];
+  addInvoice: (inv: Omit<Invoice, "id" | "invoice_number">) => void;
+  updateInvoiceStatus: (id: string, status: 'Draft' | 'Unpaid' | 'Paid' | 'Overdue') => void;
+  
   toastMessage: string | null;
   showToast: (msg: string) => void;
 }
@@ -76,6 +96,9 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [brands] = useState<Brand[]>(INITIAL_BRANDS);
   const [selectedBrandId, setSelectedBrandId] = useState<string>("brand-antrasida");
   const [selectedPeriod, setSelectedPeriod] = useState<string>("Juli 2026");
+  const [customStartDate, setCustomStartDate] = useState<string>("2026-07-01");
+  const [customEndDate, setCustomEndDate] = useState<string>("2026-07-31");
+  const [isCustomPeriod, setIsCustomPeriod] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   
   const [dailySales, setDailySales] = useState<DailySale[]>(INITIAL_DAILY_SALES);
@@ -87,6 +110,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [accountsReceivable, setAccountsReceivable] = useState<AccountReceivable[]>(INITIAL_ACCOUNTS_RECEIVABLE);
   const [profitLossSummary] = useState<ProfitLossSummary>(INITIAL_PROFIT_LOSS);
   
+  const [accounts, setAccounts] = useState<ChartOfAccount[]>(INITIAL_ACCOUNTS);
+  const [journalEntries, setJournalEntries] = useState<JournalEntry[]>(INITIAL_JOURNAL_ENTRIES);
+  const [invoices, setInvoices] = useState<Invoice[]>(INITIAL_INVOICES);
+  
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const showToast = (msg: string) => {
@@ -95,11 +122,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    // Cek preferensi tema lokal atau DOM
+    // Tema difokuskan ke mode gelap (Dark Mode Only)
     if (typeof window !== "undefined") {
-      const isDark = document.documentElement.classList.contains("dark") || true;
-      setIsDarkMode(isDark);
-      if (isDark) document.documentElement.classList.add("dark");
+      setIsDarkMode(true);
+      document.documentElement.classList.add("dark");
     }
 
     // Jika Supabase terkoneksi live, coba ambil data dari database
@@ -122,12 +148,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleDarkMode = () => {
-    const nextMode = !isDarkMode;
-    setIsDarkMode(nextMode);
-    if (nextMode) {
+    // Fokus tema ke mode gelap
+    setIsDarkMode(true);
+    if (typeof window !== "undefined") {
       document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
     }
   };
 
@@ -309,6 +333,61 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     showToast(`🏷️ Status piutang diubah menjadi '${status}'.`);
   };
 
+  // ==========================
+  // CRUD ACCURATE ERP ACCOUNTING
+  // ==========================
+  const addJournalEntry = (raw: Omit<JournalEntry, "id" | "transaction_code">) => {
+    const newId = `jrn-${Date.now()}`;
+    const codeNumber = (journalEntries.length + 1).toString().padStart(4, "0");
+    const newEntry: JournalEntry = {
+      ...raw,
+      id: newId,
+      transaction_code: `JRN/SMB/2026/${codeNumber}`,
+      is_automated: raw.is_automated || false,
+    };
+    
+    // Update balance on accounts
+    const updatedAccounts = accounts.map((acc) => {
+      let debitDelta = 0;
+      let creditDelta = 0;
+      newEntry.items.forEach((item) => {
+        if (item.account_code === acc.code) {
+          debitDelta += item.debit;
+          creditDelta += item.credit;
+        }
+      });
+      if (debitDelta === 0 && creditDelta === 0) return acc;
+      
+      const nextBalance = acc.normal_balance === "Debit"
+        ? acc.balance + debitDelta - creditDelta
+        : acc.balance + creditDelta - debitDelta;
+      return { ...acc, balance: nextBalance };
+    });
+
+    setAccounts(updatedAccounts);
+    setJournalEntries((prev) => [newEntry, ...prev]);
+    showToast("Jurnal akuntansi berhasil dicatat & mutasi saldo COA diperbarui");
+  };
+
+  const addInvoice = (raw: Omit<Invoice, "id" | "invoice_number">) => {
+    const newId = `inv-${Date.now()}`;
+    const codeNumber = (invoices.length + 1).toString().padStart(3, "0");
+    const newInv: Invoice = {
+      ...raw,
+      id: newId,
+      invoice_number: `INV/SMB/2026/${codeNumber}`,
+    };
+    setInvoices((prev) => [newInv, ...prev]);
+    showToast(`Faktur ${newInv.invoice_number} berhasil dibuat`);
+  };
+
+  const updateInvoiceStatus = (id: string, status: 'Draft' | 'Unpaid' | 'Paid' | 'Overdue') => {
+    setInvoices((prev) =>
+      prev.map((inv) => (inv.id === id ? { ...inv, status } : inv))
+    );
+    showToast(`Status faktur diperbarui menjadi ${status}`);
+  };
+
   return (
     <DashboardContext.Provider
       value={{
@@ -317,6 +396,12 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         setSelectedBrandId,
         selectedPeriod,
         setSelectedPeriod,
+        customStartDate,
+        setCustomStartDate,
+        customEndDate,
+        setCustomEndDate,
+        isCustomPeriod,
+        setIsCustomPeriod,
         isDarkMode,
         toggleDarkMode,
         dailySales,
@@ -342,6 +427,12 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         addAccountReceivable,
         updateAccountReceivableStatus,
         profitLossSummary,
+        accounts,
+        journalEntries,
+        addJournalEntry,
+        invoices,
+        addInvoice,
+        updateInvoiceStatus,
         toastMessage,
         showToast,
       }}

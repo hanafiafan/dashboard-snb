@@ -1,5 +1,5 @@
 -- ==============================================================================
--- SUPABASE POSTGRESQL SCHEMA — DASHBOARD OPERASIONAL SNB
+-- SUPABASE POSTGRESQL SCHEMA — DASHBOARD OPERASIONAL SMB
 -- Dibuat berdasarkan struktur dokumen Data base SMB.xlsx (Antrasida & Agrodelta)
 -- ==============================================================================
 

@@ -15,7 +15,9 @@ import {
   ArrowRightLeft,
   X,
   Trash2,
+  FileText,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import { useDashboard } from "@/context/DashboardContext";
 import { JournalEntry, JournalItem } from "@/types";
 
@@ -125,23 +127,35 @@ export default function JurnalUmumPage() {
     ]);
   };
 
-  const handleExportCSV = () => {
-    let csv = "Kode Transaksi,Tanggal,Keterangan,Kode Akun,Nama Akun,Debit (IDR),Kredit (IDR)\n";
+  const handleExportExcel = () => {
+    const data: any[] = [];
     filteredEntries.forEach((entry) => {
       entry.items.forEach((item) => {
         if (selectedAccountCode === "all" || item.account_code === selectedAccountCode) {
-          csv += `"${entry.transaction_code}","${entry.date}","${entry.description}","${item.account_code}","${item.account_name}",${item.debit},${item.credit}\n`;
+          data.push({
+            "Kode Transaksi": entry.transaction_code,
+            "Tanggal": entry.date,
+            "Keterangan": entry.description,
+            "Kode Akun": item.account_code,
+            "Nama Akun": item.account_name,
+            "Debit (IDR)": item.debit,
+            "Kredit (IDR)": item.credit
+          });
         }
       });
     });
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `Jurnal_Umum_SMB_${new Date().toISOString().split("T")[0]}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+
+    const worksheet = XLSX.utils.json_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Jurnal Umum");
+
+    // Optional: Auto-adjust column width
+    const colWidths = [
+      { wch: 18 }, { wch: 12 }, { wch: 35 }, { wch: 12 }, { wch: 25 }, { wch: 15 }, { wch: 15 }
+    ];
+    worksheet["!cols"] = colWidths;
+
+    XLSX.writeFile(workbook, `Jurnal_Umum_SMB_${new Date().toISOString().split("T")[0]}.xlsx`);
   };
 
   return (
@@ -169,11 +183,11 @@ export default function JurnalUmumPage() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={handleExportCSV}
+            onClick={handleExportExcel}
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
           >
             <Download className="w-4 h-4 text-emerald-500" />
-            Export CSV
+            Export Excel
           </button>
           <button
             onClick={() => setIsModalOpen(true)}

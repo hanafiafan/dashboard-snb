@@ -15,7 +15,9 @@ import {
   Briefcase,
   Database,
   PieChart,
+  FileText,
 } from "lucide-react";
+import * as XLSX from "xlsx";
 import { useDashboard } from "@/context/DashboardContext";
 
 export default function NeracaPage() {
@@ -87,53 +89,57 @@ export default function NeracaPage() {
     return { debit, credit, isBalanced: Math.abs(debit - credit) < 0.01 };
   }, [accounts]);
 
-  const handleExportCSV = () => {
+  const handleExportExcel = () => {
     if (activeTab === "balance-sheet") {
-      let csv = "Kategori,Kode Akun,Nama Akun,Nilai Saldo (IDR)\n";
-      csv += "=== ASET LANCAR ===\n";
+      const data: any[] = [];
+      data.push({ "Kategori": "=== ASET LANCAR ===", "Kode Akun": "", "Nama Akun": "", "Nilai Saldo (IDR)": "" });
       balanceSheet.currentAssets.forEach((a) => {
-        csv += `"${a.category}","${a.code}","${a.name}",${a.balance}\n`;
+        data.push({ "Kategori": a.category, "Kode Akun": a.code, "Nama Akun": a.name, "Nilai Saldo (IDR)": a.balance });
       });
-      csv += `"",,"TOTAL ASET LANCAR",${balanceSheet.totalCurrentAssets}\n`;
-      csv += "=== ASET TETAP ===\n";
+      data.push({ "Kategori": "", "Kode Akun": "", "Nama Akun": "TOTAL ASET LANCAR", "Nilai Saldo (IDR)": balanceSheet.totalCurrentAssets });
+      
+      data.push({ "Kategori": "=== ASET TETAP ===", "Kode Akun": "", "Nama Akun": "", "Nilai Saldo (IDR)": "" });
       balanceSheet.fixedAssets.forEach((a) => {
-        csv += `"${a.category}","${a.code}","${a.name}",${a.balance}\n`;
+        data.push({ "Kategori": a.category, "Kode Akun": a.code, "Nama Akun": a.name, "Nilai Saldo (IDR)": a.balance });
       });
-      csv += `"",,"TOTAL ASET TETAP",${balanceSheet.totalFixedAssets}\n`;
-      csv += `"",,"TOTAL SELURUH ASET",${balanceSheet.totalAssets}\n\n`;
-      csv += "=== KEWAJIBAN ===\n";
+      data.push({ "Kategori": "", "Kode Akun": "", "Nama Akun": "TOTAL ASET TETAP", "Nilai Saldo (IDR)": balanceSheet.totalFixedAssets });
+      data.push({ "Kategori": "", "Kode Akun": "", "Nama Akun": "TOTAL SELURUH ASET", "Nilai Saldo (IDR)": balanceSheet.totalAssets });
+      
+      data.push({ "Kategori": "=== KEWAJIBAN ===", "Kode Akun": "", "Nama Akun": "", "Nilai Saldo (IDR)": "" });
       balanceSheet.liabilities.forEach((a) => {
-        csv += `"${a.category}","${a.code}","${a.name}",${a.balance}\n`;
+        data.push({ "Kategori": a.category, "Kode Akun": a.code, "Nama Akun": a.name, "Nilai Saldo (IDR)": a.balance });
       });
-      csv += `"",,"TOTAL KEWAJIBAN",${balanceSheet.totalLiabilities}\n`;
-      csv += "=== EKUITAS ===\n";
+      data.push({ "Kategori": "", "Kode Akun": "", "Nama Akun": "TOTAL KEWAJIBAN", "Nilai Saldo (IDR)": balanceSheet.totalLiabilities });
+      
+      data.push({ "Kategori": "=== EKUITAS ===", "Kode Akun": "", "Nama Akun": "", "Nilai Saldo (IDR)": "" });
       balanceSheet.equities.forEach((a) => {
-        csv += `"${a.category}","${a.code}","${a.name}",${a.balance}\n`;
+        data.push({ "Kategori": a.category, "Kode Akun": a.code, "Nama Akun": a.name, "Nilai Saldo (IDR)": a.balance });
       });
-      csv += `"",,"TOTAL EKUITAS",${balanceSheet.totalEquities}\n`;
-      csv += `"",,"TOTAL KEWAJIBAN & EKUITAS",${balanceSheet.totalLiabilitiesAndEquities}\n`;
+      data.push({ "Kategori": "", "Kode Akun": "", "Nama Akun": "TOTAL EKUITAS", "Nilai Saldo (IDR)": balanceSheet.totalEquities });
+      data.push({ "Kategori": "", "Kode Akun": "", "Nama Akun": "TOTAL KEWAJIBAN & EKUITAS", "Nilai Saldo (IDR)": balanceSheet.totalLiabilitiesAndEquities });
 
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `Neraca_Balance_Sheet_SMB_${new Date().toISOString().split("T")[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Balance Sheet");
+      worksheet["!cols"] = [{ wch: 20 }, { wch: 15 }, { wch: 35 }, { wch: 20 }];
+      XLSX.writeFile(workbook, `Neraca_Balance_Sheet_SMB_${new Date().toISOString().split("T")[0]}.xlsx`);
+
     } else {
-      let csv = "Kode Akun,Nama Akun,Kategori,Saldo Normal,Saldo Akhir (IDR)\n";
+      const data: any[] = [];
       filteredAccounts.forEach((a) => {
-        csv += `"${a.code}","${a.name}","${a.category}","${a.normal_balance}",${a.balance}\n`;
+        data.push({
+          "Kode Akun": a.code,
+          "Nama Akun": a.name,
+          "Kategori": a.category,
+          "Saldo Normal": a.normal_balance,
+          "Saldo Akhir (IDR)": a.balance
+        });
       });
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `Neraca_Saldo_COA_SMB_${new Date().toISOString().split("T")[0]}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Chart of Accounts");
+      worksheet["!cols"] = [{ wch: 15 }, { wch: 35 }, { wch: 20 }, { wch: 15 }, { wch: 20 }];
+      XLSX.writeFile(workbook, `Bagan_Akun_COA_SMB_${new Date().toISOString().split("T")[0]}.xlsx`);
     }
   };
 
@@ -162,11 +168,11 @@ export default function NeracaPage() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 hover:from-emerald-500 hover:to-teal-500 transition-all transform hover:-translate-y-0.5"
+            onClick={handleExportExcel}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-sm hover:bg-slate-200 dark:hover:bg-slate-700 transition-all shadow-sm"
           >
-            <Download className="w-4 h-4" />
-            Export Laporan ({activeTab === "balance-sheet" ? "Neraca" : "COA"})
+            <Download className="w-4 h-4 text-emerald-500" />
+            Export Excel
           </button>
         </div>
       </div>

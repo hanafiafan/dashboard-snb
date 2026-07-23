@@ -29,7 +29,7 @@ import {
   INITIAL_JOURNAL_ENTRIES,
   INITIAL_INVOICES,
 } from "@/lib/mock-data";
-import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import * as db from "@/actions/db";
 
 interface DashboardContextType {
   brands: Brand[];
@@ -131,23 +131,18 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       document.documentElement.classList.add("dark");
     }
 
-    // Jika Supabase terkoneksi live, coba ambil data dari database
-    async function fetchLiveSupabaseData() {
-      if (!isSupabaseConfigured || !supabase) return;
+    // Ambil data live dari Prisma Database (Server Actions)
+    async function fetchLiveDatabaseData() {
       try {
-        const { data: salesData } = await supabase.from("daily_sales").select("*").order("date", { ascending: true });
-        if (salesData && salesData.length > 0) setDailySales(salesData);
-
-        const { data: prodData } = await supabase.from("products").select("*").order("sku", { ascending: true });
-        if (prodData && prodData.length > 0) setProducts(prodData);
-
-        const { data: cfData } = await supabase.from("cash_flow_ledger").select("*").order("date", { ascending: true });
-        if (cfData && cfData.length > 0) setCashFlow(cfData);
+        const { salesData, prodData, cfData } = await db.fetchAllData();
+        if (salesData && salesData.length > 0) setDailySales(salesData as unknown as DailySale[]);
+        if (prodData && prodData.length > 0) setProducts(prodData as unknown as Product[]);
+        if (cfData && cfData.length > 0) setCashFlow(cfData as unknown as CashFlowItem[]);
       } catch (err) {
-        console.error("Gagal mengambil data dari Supabase live, menggunakan mock seed aktual:", err);
+        console.error("Gagal mengambil data live dari database VPS, menggunakan mock seed aktual:", err);
       }
     }
-    fetchLiveSupabaseData();
+    fetchLiveDatabaseData();
   }, []);
 
   const toggleDarkMode = () => {
@@ -210,8 +205,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
 
     showToast(`Data penjualan tanggal ${raw.date} & Jurnal Otomatis berhasil dicatat`);
 
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("daily_sales").insert([newSale]);
+    try {
+      await db.insertDailySale(newSale);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -242,16 +239,20 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       })
     );
     showToast(`Data transaksi penjualan berhasil diperbarui`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("daily_sales").update(updated).eq("id", id);
+    try {
+      await db.updateDailySaleRecord(id, updated);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const deleteDailySale = async (id: string) => {
     setDailySales((prev) => prev.filter((item) => item.id !== id));
     showToast(`Data transaksi penjualan berhasil dihapus`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("daily_sales").delete().eq("id", id);
+    try {
+      await db.deleteDailySaleRecord(id);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -262,24 +263,30 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     const newProd: Product = { ...product, id: `prod-${Date.now()}` };
     setProducts((prev) => [...prev, newProd]);
     showToast(`Produk baru ${product.sku} berhasil ditambahkan ke katalog HPP`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("products").insert([newProd]);
+    try {
+      await db.insertProduct(newProd);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const updateProduct = async (id: string, updated: Partial<Product>) => {
     setProducts((prev) => prev.map((p) => (p.id === id ? { ...p, ...updated } : p)));
     showToast(`Harga & HPP Produk berhasil diperbarui`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("products").update(updated).eq("id", id);
+    try {
+      await db.updateProductRecord(id, updated);
+    } catch (e) {
+      console.error(e);
     }
   };
 
   const deleteProduct = async (id: string) => {
     setProducts((prev) => prev.filter((p) => p.id !== id));
     showToast(`Produk dihapus dari daftar katalog HPP`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("products").delete().eq("id", id);
+    try {
+      await db.deleteProductRecord(id);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -296,8 +303,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
     };
     setCashFlow((prev) => [...prev, newCf]);
     showToast(`Transaksi kas '${item.description}' berhasil dicatat. Saldo kini Rp ${running_balance.toLocaleString("id-ID")}`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("cash_flow_ledger").insert([newCf]);
+    try {
+      await db.insertCashFlow(newCf);
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -312,8 +321,10 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
       });
     });
     showToast(`Transaksi kas berhasil dihapus dari buku besar`);
-    if (isSupabaseConfigured && supabase) {
-      await supabase.from("cash_flow_ledger").delete().eq("id", id);
+    try {
+      await db.deleteCashFlowRecord(id);
+    } catch (e) {
+      console.error(e);
     }
   };
 

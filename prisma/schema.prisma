@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Brand {
+  id                    String  @id @default(uuid())
+  code                  String  @unique
+  name                  String
+  default_admin_rate    Float
+  default_processing_fee Float
+  default_shipping_rate Float
+  default_affiliate_rate Float
+  default_hpp_rate      Float
+  is_active             Boolean @default(true)
+
+  products              Product[]
+  daily_sales           DailySale[]
+  withdrawals           RevenueWithdrawal[]
+  expenditures          InventoryExpenditure[]
+  budgets               ExpenseBudget[]
+  receivables           AccountReceivable[]
+  journal_entries       JournalEntry[]
+  invoices              Invoice[]
+
+  @@map("brands")
+}
+
+model Product {
+  id           String  @id @default(uuid())
+  sku          String  @unique
+  brand_id     String
+  name         String
+  product_code String?
+  size         String
+  selling_price Float
+  hpp_price    Float
+  is_active    Boolean @default(true)
+
+  brand        Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("products")
+}
+
+model DailySale {
+  id                      String  @id @default(uuid())
+  brand_id                String
+  date                    String  // YYYY-MM-DD
+  day_number              Int
+  omset_marketing         Float
+  omset_finance           Float
+  valid_orders            Int
+  admin_fee               Float
+  processing_fee          Float
+  promotion_cost          Float
+  ads_spend               Float
+  shipping_cost           Float
+  affiliate_cost          Float
+  hpp_cost                Float
+  total_expense           Float
+  gross_margin            Float
+  gross_margin_percentage Float
+  roi                     String
+  notes                   String?
+
+  brand                   Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("daily_sales")
+}
+
+model CashFlowItem {
+  id              String  @id @default(uuid())
+  date            String  // YYYY-MM-DD
+  description     String
+  channel         String?
+  account         String?
+  cash_in         Float
+  cash_out        Float
+  running_balance Float
+  receipt_url     String?
+
+  @@map("cash_flow_ledger")
+}
+
+model RevenueWithdrawal {
+  id       String  @id @default(uuid())
+  brand_id String
+  date     String
+  amount   Float
+  notes    String?
+
+  brand    Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("revenue_withdrawals")
+}
+
+model InventoryExpenditure {
+  id       String  @id @default(uuid())
+  brand_id String
+  date     String
+  amount   Float
+  notes    String?
+
+  brand    Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("inventory_expenditures")
+}
+
+model ExpenseBudget {
+  id               String  @id @default(uuid())
+  brand_id         String
+  category         String
+  period           String
+  estimated_amount Float
+  realized_amount  Float
+
+  brand            Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("expense_budgets")
+}
+
+model AccountReceivable {
+  id            String  @id @default(uuid())
+  brand_id      String
+  date          String
+  debtor_source String
+  amount        Float
+  status        String  // Pending | Lunas | Dicicil
+  notes         String?
+
+  brand         Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("accounts_receivable")
+}
+
+model ChartOfAccount {
+  id             String  @id @default(uuid())
+  code           String  @unique
+  name           String
+  category       String
+  normal_balance String
+  balance        Float   @default(0)
+
+  @@map("chart_of_accounts")
+}
+
+model JournalEntry {
+  id               String  @id @default(uuid())
+  transaction_code String  @unique
+  date             String
+  description      String
+  brand_id         String?
+  items            Json    // Stores array of JournalItem
+  is_automated     Boolean @default(false)
+
+  brand            Brand?  @relation(fields: [brand_id], references: [id])
+
+  @@map("journal_entries")
+}
+
+model Invoice {
+  id              String  @id @default(uuid())
+  invoice_number  String  @unique
+  type            String  // PENJUALAN | PEMBELIAN
+  date            String
+  due_date        String
+  customer_vendor String
+  brand_id        String
+  items           Json    // Stores array of InvoiceItem
+  subtotal        Float
+  tax             Float
+  discount        Float
+  total           Float
+  status          String  // Draft | Unpaid | Paid | Overdue
+  notes           String?
+
+  brand           Brand   @relation(fields: [brand_id], references: [id])
+
+  @@map("invoices")
+}

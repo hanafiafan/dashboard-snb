@@ -25,6 +25,17 @@ export function Header() {
   const showBrandFilter = ["/", "/penjualan", "/jurnal", "/faktur"].includes(pathname);
   const showPeriodFilter = ["/"].includes(pathname);
 
+  const toastMarkup = toastMessage ? (
+    <div className="fixed top-6 right-8 z-50 animate-bounce bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-emerald-500/50 flex items-center gap-3 font-semibold text-sm">
+      <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+      <span>{toastMessage}</span>
+    </div>
+  ) : null;
+
+  if (!showBrandFilter && !showPeriodFilter) {
+    return <>{toastMarkup}</>;
+  }
+
   return (
     <header className="min-h-[5rem] py-3.5 glass-panel border-b border-slate-800/80 px-8 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-10 bg-slate-950/95 backdrop-blur-xl shadow-lg print:hidden">
       {/* Brand Selector Tabs */}
@@ -127,12 +138,7 @@ export function Header() {
       </div>
 
       {/* Toast Popup */}
-      {toastMessage && (
-        <div className="absolute top-20 right-8 z-50 animate-bounce bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl border border-emerald-500/50 flex items-center gap-3 font-semibold text-sm">
-          <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
+      {toastMarkup}
     </header>
   );
 }

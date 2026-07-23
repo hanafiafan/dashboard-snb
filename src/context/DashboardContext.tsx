@@ -42,7 +42,9 @@ interface DashboardContextType {
   customEndDate: string;
   setCustomEndDate: (date: string) => void;
   isCustomPeriod: boolean;
-  setIsCustomPeriod: (isCustom: boolean) => void;
+  setIsCustomPeriod: (val: boolean) => void;
+  isMobileMenuOpen: boolean;
+  setIsMobileMenuOpen: (val: boolean) => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
   
@@ -99,6 +101,7 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
   const [customStartDate, setCustomStartDate] = useState<string>("2026-07-01");
   const [customEndDate, setCustomEndDate] = useState<string>("2026-07-31");
   const [isCustomPeriod, setIsCustomPeriod] = useState<boolean>(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
   
   const [dailySales, setDailySales] = useState<DailySale[]>(INITIAL_DAILY_SALES);
@@ -424,6 +427,8 @@ export function DashboardProvider({ children }: { children: ReactNode }) {
         setCustomEndDate,
         isCustomPeriod,
         setIsCustomPeriod,
+        isMobileMenuOpen,
+        setIsMobileMenuOpen,
         isDarkMode,
         toggleDarkMode,
         dailySales,

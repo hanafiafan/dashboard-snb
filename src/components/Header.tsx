@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Filter, Calendar, Sprout, Layers, Bell, CheckCircle2 } from "lucide-react";
+import { Filter, Calendar, Sprout, Layers, Bell, CheckCircle2, Menu } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
 import { usePathname } from "next/navigation";
 
@@ -19,6 +19,7 @@ export function Header() {
     isCustomPeriod,
     setIsCustomPeriod,
     toastMessage,
+    setIsMobileMenuOpen,
   } = useDashboard();
 
   const pathname = usePathname();
@@ -33,13 +34,26 @@ export function Header() {
   ) : null;
 
   if (!showBrandFilter && !showPeriodFilter) {
-    return <>{toastMarkup}</>;
+    return (
+      <>
+        {toastMarkup}
+        {/* Mobile-only header when filters are hidden */}
+        <header className="md:hidden min-h-[4rem] px-4 flex items-center bg-slate-950/95 border-b border-slate-800/80 sticky top-0 z-10 print:hidden">
+          <button onClick={() => setIsMobileMenuOpen(true)} className="p-2 bg-slate-900 rounded-xl border border-slate-800 text-slate-400 hover:text-white">
+            <Menu className="w-5 h-5" />
+          </button>
+        </header>
+      </>
+    );
   }
 
   return (
-    <header className="min-h-[5rem] py-3.5 glass-panel border-b border-slate-800/80 px-8 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-10 bg-slate-950/95 backdrop-blur-xl shadow-lg print:hidden">
+    <header className="min-h-[5rem] py-3.5 glass-panel border-b border-slate-800/80 px-4 md:px-8 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-10 bg-slate-950/95 backdrop-blur-xl shadow-lg print:hidden">
       {/* Brand Selector Tabs */}
-      <div className="flex items-center flex-wrap gap-3">
+      <div className="flex items-center flex-wrap gap-3 w-full md:w-auto">
+        <button onClick={() => setIsMobileMenuOpen(true)} className="md:hidden p-2 bg-slate-900 rounded-xl border border-slate-800 text-slate-400 hover:text-white mr-1">
+          <Menu className="w-5 h-5" />
+        </button>
         {showBrandFilter && (
           <>
             <div className="flex items-center gap-2 text-slate-400 font-medium text-xs uppercase tracking-wider">

@@ -21,6 +21,7 @@ import {
   FileText,
   PanelLeftClose,
   PanelLeftOpen,
+  X,
 } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
 
@@ -46,34 +47,53 @@ const helpNavItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { isMobileMenuOpen, setIsMobileMenuOpen } = useDashboard();
 
   return (
-    <aside className={`glass-panel flex flex-col justify-between py-6 shrink-0 border-r border-slate-800/80 transition-all duration-300 relative z-20 overflow-y-auto bg-slate-950/95 print:hidden ${isCollapsed ? 'w-20 px-3 items-center' : 'w-72 px-6'}`}>
-      <div className="w-full">
-        {/* Brand Header */}
-        <div className={`flex items-center mb-6 px-2 ${isCollapsed ? 'justify-center' : 'justify-between gap-3.5'}`}>
-          <div className="flex items-center gap-3.5">
+    <>
+      {/* Mobile Overlay */}
+      {isMobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-40 md:hidden animate-in fade-in"
+          onClick={() => setIsMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={`glass-panel flex flex-col justify-between py-6 shrink-0 border-r border-slate-800/80 transition-transform duration-300 overflow-y-auto bg-slate-950/95 print:hidden fixed md:relative inset-y-0 left-0 z-50 transform ${isMobileMenuOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'} md:translate-x-0 ${isCollapsed ? 'md:w-20 md:px-3 md:items-center w-72 px-6' : 'w-72 px-6'}`}>
+        <div className="w-full">
+          {/* Brand Header */}
+          <div className={`flex items-center mb-6 px-2 justify-between ${isCollapsed ? 'md:justify-center' : 'md:justify-between gap-3.5'}`}>
+            <div className="flex items-center gap-3.5">
             <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-emerald-500/25 text-white font-bold text-xl shrink-0 transform hover:scale-105 transition-transform">
               <Sprout className="w-6 h-6" />
             </div>
             {!isCollapsed && (
               <div>
-                <h1 className="font-extrabold text-lg tracking-tight text-white leading-tight">
+                <h1 className="font-extrabold text-lg tracking-tight text-white leading-tight md:block block">
                   DASHBOARD SMB
                 </h1>
-                <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
+                <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5 mt-0.5 md:flex flex">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse inline-block shadow-sm shadow-emerald-400"></span>
                   Accurate ERP Suite
                 </p>
               </div>
             )}
+            
+            {/* Close Button for Mobile */}
+            <button 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="md:hidden text-slate-400 hover:text-white bg-slate-800/50 p-2 rounded-xl"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
         </div>
 
-        {/* Toggle Button */}
+        {/* Toggle Button (Desktop Only) */}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="w-full flex items-center justify-center py-2 mb-6 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 transition-colors text-slate-400 hover:text-white"
+          className="hidden md:flex w-full items-center justify-center py-2 mb-6 rounded-xl border border-slate-800 bg-slate-900/50 hover:bg-slate-800 transition-colors text-slate-400 hover:text-white"
           title={isCollapsed ? "Perbesar Sidebar" : "Perkecil Sidebar"}
         >
           {isCollapsed ? <PanelLeftOpen className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
@@ -262,12 +282,13 @@ export function Sidebar() {
           )}
         </div>
 
-        {!isCollapsed && (
-          <div className="px-3 text-[11px] text-slate-500 text-center font-medium truncate">
-            SMB Ops Dashboard v1.0 &copy; 2026
-          </div>
-        )}
-      </div>
-    </aside>
+          {!isCollapsed && (
+            <div className="px-3 text-[11px] text-slate-500 text-center font-medium truncate md:block block">
+              SMB Ops Dashboard v1.0 &copy; 2026
+            </div>
+          )}
+        </div>
+      </aside>
+    </>
   );
 }

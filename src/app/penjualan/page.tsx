@@ -13,8 +13,11 @@ import {
   FileSpreadsheet,
   ArrowRight,
   X,
+  UploadCloud,
+  FileSpreadsheet as FileSpreadsheetIcon,
 } from "lucide-react";
 import { useDashboard } from "@/context/DashboardContext";
+import * as XLSX from "xlsx";
 import { DailySale } from "@/types";
 
 export default function PenjualanHarianPage() {
@@ -29,6 +32,7 @@ export default function PenjualanHarianPage() {
 
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [editingSale, setEditingSale] = useState<DailySale | null>(null);
 
   // Form state
@@ -171,6 +175,71 @@ export default function PenjualanHarianPage() {
     setIsModalOpen(false);
   };
 
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const bstr = evt.target?.result;
+        const wb = XLSX.read(bstr, { type: "binary" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json<any>(ws);
+
+        if (data && data.length > 0) {
+          let successCount = 0;
+          data.forEach((row, index) => {
+            // Mapping default template (can be adjusted)
+            const dateVal = row["Tanggal"] || `2026-07-${String(index + 1).padStart(2, "0")}`;
+            const brandCode = row["Unit/Brand"] || "Antrasida";
+            const brand_id = brandCode.toLowerCase().includes("agro") ? "brand-agrodelta" : "brand-antrasida";
+            
+            const omset_marketing = Number(row["Omset Marketing"] || row["Penjualan Kotor"] || 5000000);
+            const omset_finance = Number(row["Omset Finance"] || row["Penjualan Bersih"] || omset_marketing * 0.9);
+            const valid_orders = Number(row["Valid Orders"] || row["Pesanan"] || 50);
+            const promotion_cost = Number(row["Biaya Promosi"] || 0);
+            const ads_spend = Number(row["Ads Spend"] || row["Beban Iklan"] || 0);
+            
+            // Re-calculate automatic rates based on brand to ensure matching auto-journaling
+            const selectedBrand = brands.find((b) => b.id === brand_id) || brands[0];
+            const admin_fee = omset_finance * (selectedBrand?.default_admin_rate || 0.16);
+            const processing_fee = valid_orders * (selectedBrand?.default_processing_fee || 1250);
+            const shipping_cost = omset_finance * (selectedBrand?.default_shipping_rate || 0.0899);
+            const affiliate_cost = omset_finance * (selectedBrand?.default_affiliate_rate || 0.09);
+            const hpp_cost = omset_finance * (selectedBrand?.default_hpp_rate || 0.1682);
+
+            addDailySale({
+              brand_id,
+              date: dateVal,
+              day_number: Number(dateVal.split("-")[2] || index + 1),
+              omset_marketing,
+              omset_finance,
+              valid_orders,
+              admin_fee,
+              processing_fee,
+              promotion_cost,
+              ads_spend,
+              shipping_cost,
+              affiliate_cost,
+              hpp_cost,
+              notes: "Import E-Commerce (Shopee/Tokped)",
+            });
+            successCount++;
+          });
+          
+          alert(`Sukses! ${successCount} baris data berhasil diimpor dan Auto-Journaling berhasil dieksekusi.`);
+          setIsImportModalOpen(false);
+        }
+      } catch (err) {
+        console.error("Error parsing file", err);
+        alert("Gagal membaca file Excel. Pastikan formatnya benar.");
+      }
+    };
+    reader.readAsBinaryString(file);
+  };
+
   return (
     <div className="space-y-8 animate-fadeIn">
       {/* Title & Add Button */}
@@ -188,13 +257,22 @@ export default function PenjualanHarianPage() {
           </p>
         </div>
 
-        <button
-          onClick={handleOpenAdd}
-          className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-indigo-600 hover:from-emerald-600 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Tambah Transaksi Harian</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsImportModalOpen(true)}
+            className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-sm border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-2 transition-all"
+          >
+            <UploadCloud className="w-4 h-4 text-emerald-500" />
+            <span>Import E-Commerce</span>
+          </button>
+          <button
+            onClick={handleOpenAdd}
+            className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-500 to-indigo-600 hover:from-emerald-600 hover:to-indigo-700 text-white font-bold text-sm shadow-lg shadow-emerald-500/25 flex items-center gap-2 transition-all transform hover:-translate-y-0.5"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Tambah Transaksi</span>
+          </button>
+        </div>
       </div>
 
       {/* Summary KPI Cards */}
@@ -575,6 +653,61 @@ export default function PenjualanHarianPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* IMPORT MODAL */}
+      {isImportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in">
+          <div className="glass-panel w-full max-w-lg rounded-3xl p-6 md:p-8 border border-slate-800/80 shadow-2xl relative">
+            <button
+              onClick={() => setIsImportModalOpen(false)}
+              className="absolute top-6 right-6 text-slate-400 hover:text-slate-200 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-emerald-500/20 text-white">
+                <UploadCloud className="w-5 h-5" />
+              </div>
+              <div>
+                <h2 className="text-lg font-black text-slate-900 dark:text-white">Import Data E-Commerce</h2>
+                <p className="text-xs text-slate-500 font-medium mt-0.5">Upload file Excel/CSV dari Shopee, Tokopedia, dll.</p>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div className="bg-slate-100 dark:bg-slate-900/80 p-5 rounded-2xl border border-dashed border-slate-300 dark:border-slate-700 text-center space-y-4">
+                <FileSpreadsheetIcon className="w-10 h-10 text-emerald-500 mx-auto opacity-80" />
+                <div>
+                  <p className="text-sm font-bold text-slate-700 dark:text-slate-300">Pilih file .xlsx atau .csv</p>
+                  <p className="text-[11px] text-slate-500 mt-1">Sistem akan secara otomatis membaca baris, mengkalkulasi margin, dan melakukan Auto-Journaling ke Buku Besar.</p>
+                </div>
+                <input 
+                  type="file" 
+                  accept=".xlsx, .xls, .csv" 
+                  onChange={handleFileUpload}
+                  className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-500 hover:file:bg-emerald-500/20 cursor-pointer"
+                />
+              </div>
+
+              <div className="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
+                <div className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                  <strong>Peringatan Auto-Journaling:</strong>
+                  <p className="mt-1">Untuk setiap baris transaksi yang diimpor, sistem akan mencatat Jurnal Memorial ganda untuk Piutang, HPP, Ongkir, dan Penjualan secara otomatis ke Buku Besar.</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-3 pt-6 mt-2">
+              <button
+                onClick={() => setIsImportModalOpen(false)}
+                className="px-5 py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-300 transition-colors"
+              >
+                Tutup
+              </button>
+            </div>
           </div>
         </div>
       )}

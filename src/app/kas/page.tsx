@@ -8,10 +8,11 @@ import {
   Search,
   ArrowUpRight,
   ArrowDownRight,
-  X,
   Calendar,
   Building2,
   FileSpreadsheet,
+  Link as LinkIcon,
+  X,
 } from "lucide-react";
 import {
   AreaChart,
@@ -41,6 +42,7 @@ export default function BukuKasPage() {
   const [formAccount, setFormAccount] = useState("Kas BCA");
   const [formType, setFormType] = useState<"IN" | "OUT">("IN");
   const [formAmount, setFormAmount] = useState<number>(5000000);
+  const [formProofLink, setFormProofLink] = useState<string>("");
 
   // Filter list
   const filteredList = useMemo(() => {
@@ -92,6 +94,7 @@ export default function BukuKasPage() {
     setFormAccount("Kas BCA");
     setFormType("IN");
     setFormAmount(3500000);
+    setFormProofLink("");
     setIsModalOpen(true);
   };
 
@@ -104,6 +107,7 @@ export default function BukuKasPage() {
       account: formAccount,
       cash_in: formType === "IN" ? Number(formAmount) : 0,
       cash_out: formType === "OUT" ? Number(formAmount) : 0,
+      receipt_url: formProofLink || null,
     });
     setIsModalOpen(false);
   };
@@ -281,7 +285,16 @@ export default function BukuKasPage() {
                   className="hover:bg-slate-100/60 dark:hover:bg-slate-800/40 transition-colors"
                 >
                   <td className="py-3 px-6 font-mono text-slate-500 dark:text-slate-400">{item.date}</td>
-                  <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">{item.description}</td>
+                  <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">
+                    <div className="flex flex-col gap-1">
+                      <span>{item.description}</span>
+                      {item.receipt_url && (
+                        <a href={item.receipt_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-[10px] text-sky-500 hover:text-sky-600 transition-colors bg-sky-500/10 w-max px-2 py-0.5 rounded">
+                          <LinkIcon className="w-3 h-3" /> Lihat Nota / Bukti
+                        </a>
+                      )}
+                    </div>
+                  </td>
                   <td className="py-3 px-4">
                     <span className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300">
                       {item.channel || "Marketplace"}
@@ -438,6 +451,19 @@ export default function BukuKasPage() {
                   required
                   min={1}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-base font-black text-sky-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-500 uppercase mb-1.5 flex items-center gap-1">
+                  Link Bukti / Nota (Opsional) <LinkIcon className="w-3 h-3 text-slate-400" />
+                </label>
+                <input
+                  type="url"
+                  value={formProofLink}
+                  onChange={(e) => setFormProofLink(e.target.value)}
+                  placeholder="Paste link Google Drive disini..."
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-xs font-medium text-slate-500"
                 />
               </div>
 

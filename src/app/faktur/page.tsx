@@ -369,7 +369,10 @@ export default function FakturPage() {
             </div>
 
             {/* COMMERCIAL INVOICE PRINT DOCUMENT */}
-            <div className="space-y-8 bg-white dark:bg-slate-900/90 print:bg-white p-8 md:p-10 rounded-2xl border border-slate-200 dark:border-slate-800 print:border-none text-slate-900 dark:text-slate-100 print:text-black print:overflow-visible print:w-full print:p-0 print:shadow-none print:m-0">
+            <div 
+              className="space-y-8 bg-white dark:bg-slate-900/90 print:bg-white p-8 md:p-10 rounded-2xl border border-slate-200 dark:border-slate-800 print:border-none text-slate-900 dark:text-slate-100 print:text-black print:overflow-visible print:w-full print:p-0 print:shadow-none print:m-0"
+              style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" }}
+            >
               {/* Document Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-8 border-b-2 border-slate-800 dark:border-slate-200 print:border-black">
                 <div className="flex items-center gap-4">
@@ -461,54 +464,57 @@ export default function FakturPage() {
                 </table>
               </div>
 
-              {/* Summary Calculation Section */}
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-6 border-t-2 border-slate-800 dark:border-slate-200 print:border-black">
-                <div className="md:col-span-6 space-y-2 text-xs">
-                  <p className="font-bold uppercase tracking-wider text-slate-500 print:text-gray-600">
-                    Catatan Pembayaran / Bank Transfer:
-                  </p>
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 print:bg-gray-100 border border-slate-200 dark:border-slate-700 print:border-gray-300 font-semibold space-y-1">
-                    <p>Bank BCA: 123-456-7890 (a.n. CV SURYA MITRA BERKAH)</p>
-                    <p>Bank Mandiri: 987-654-3210 (a.n. CV SURYA MITRA BERKAH)</p>
-                    {previewInvoice.notes && <p className="pt-2 italic text-slate-600 dark:text-slate-400">Catatan: {previewInvoice.notes}</p>}
-                  </div>
-                </div>
-
-                <div className="md:col-span-6 space-y-2 text-sm">
-                  <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800 print:border-gray-300">
-                    <span className="font-semibold text-slate-600 dark:text-slate-400 print:text-gray-700">Subtotal</span>
-                    <span className="font-mono font-bold">Rp {previewInvoice.subtotal.toLocaleString("id-ID")}</span>
-                  </div>
-                  <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800 print:border-gray-300">
-                    <span className="font-semibold text-slate-600 dark:text-slate-400 print:text-gray-700">Pajak (PPN / Tax)</span>
-                    <span className="font-mono font-bold">Rp {previewInvoice.tax.toLocaleString("id-ID")}</span>
-                  </div>
-                  {previewInvoice.discount > 0 && (
-                    <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800 print:border-gray-300 text-rose-600 print:text-black">
-                      <span className="font-semibold">Potongan Diskon</span>
-                      <span className="font-mono font-bold">- Rp {previewInvoice.discount.toLocaleString("id-ID")}</span>
+              {/* Summary Calculation & Signatures Container (Prevent page break inside) */}
+              <div className="print:break-inside-avoid space-y-8">
+                {/* Summary Calculation Section */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pt-6 border-t-2 border-slate-800 dark:border-slate-200 print:border-black">
+                  <div className="md:col-span-6 space-y-2 text-xs">
+                    <p className="font-bold uppercase tracking-wider text-slate-500 print:text-gray-600">
+                      Catatan Pembayaran / Bank Transfer:
+                    </p>
+                    <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800 print:bg-gray-100 border border-slate-200 dark:border-slate-700 print:border-gray-300 font-semibold space-y-1">
+                      <p>Bank BCA: 123-456-7890 (a.n. CV SURYA MITRA BERKAH)</p>
+                      <p>Bank Mandiri: 987-654-3210 (a.n. CV SURYA MITRA BERKAH)</p>
+                      {previewInvoice.notes && <p className="pt-2 italic text-slate-600 dark:text-slate-400">Catatan: {previewInvoice.notes}</p>}
                     </div>
-                  )}
-                  <div className="flex justify-between py-2 font-black text-lg text-slate-900 dark:text-white print:text-black border-t-2 border-slate-800 dark:border-slate-200 print:border-black">
-                    <span>TOTAL TAGIHAN</span>
-                    <span className="font-mono text-indigo-600 dark:text-indigo-400 print:text-black">
-                      Rp {previewInvoice.total.toLocaleString("id-ID")}
-                    </span>
+                  </div>
+
+                  <div className="md:col-span-6 space-y-2 text-sm">
+                    <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800 print:border-gray-300">
+                      <span className="font-semibold text-slate-600 dark:text-slate-400 print:text-gray-700">Subtotal</span>
+                      <span className="font-mono font-bold">Rp {previewInvoice.subtotal.toLocaleString("id-ID")}</span>
+                    </div>
+                    <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800 print:border-gray-300">
+                      <span className="font-semibold text-slate-600 dark:text-slate-400 print:text-gray-700">Pajak (PPN / Tax)</span>
+                      <span className="font-mono font-bold">Rp {previewInvoice.tax.toLocaleString("id-ID")}</span>
+                    </div>
+                    {previewInvoice.discount > 0 && (
+                      <div className="flex justify-between py-1 border-b border-slate-200 dark:border-slate-800 print:border-gray-300 text-rose-600 print:text-black">
+                        <span className="font-semibold">Potongan Diskon</span>
+                        <span className="font-mono font-bold">- Rp {previewInvoice.discount.toLocaleString("id-ID")}</span>
+                      </div>
+                    )}
+                    <div className="flex justify-between py-2 font-black text-lg text-slate-900 dark:text-white print:text-black border-t-2 border-slate-800 dark:border-slate-200 print:border-black">
+                      <span>TOTAL TAGIHAN</span>
+                      <span className="font-mono text-indigo-600 dark:text-indigo-400 print:text-black">
+                        Rp {previewInvoice.total.toLocaleString("id-ID")}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Signatures */}
-              <div className="grid grid-cols-2 gap-8 pt-12 pb-4 text-center text-xs font-bold">
-                <div>
-                  <p className="mb-16">Penerima / Pelanggan,</p>
-                  <div className="w-44 mx-auto border-b border-slate-800 dark:border-slate-200 print:border-black"></div>
-                  <p className="mt-1 text-[11px] font-normal text-slate-500">(Tanda tangan & Stempel)</p>
-                </div>
-                <div>
-                  <p className="mb-16">CV Surya Mitra Berkah (Finance & Accounting),</p>
-                  <div className="w-44 mx-auto border-b border-slate-800 dark:border-slate-200 print:border-black"></div>
-                  <p className="mt-1 text-[11px] font-normal text-slate-500">(Authorized Signature)</p>
+                {/* Signatures */}
+                <div className="grid grid-cols-2 gap-8 pt-8 pb-4 text-center text-xs font-bold">
+                  <div>
+                    <p className="mb-16">Penerima / Pelanggan,</p>
+                    <div className="w-44 mx-auto border-b border-slate-800 dark:border-slate-200 print:border-black"></div>
+                    <p className="mt-1 text-[11px] font-normal text-slate-500">(Tanda tangan & Stempel)</p>
+                  </div>
+                  <div>
+                    <p className="mb-16">CV Surya Mitra Berkah (Finance & Accounting),</p>
+                    <div className="w-44 mx-auto border-b border-slate-800 dark:border-slate-200 print:border-black"></div>
+                    <p className="mt-1 text-[11px] font-normal text-slate-500">(Authorized Signature)</p>
+                  </div>
                 </div>
               </div>
             </div>

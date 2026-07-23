@@ -123,11 +123,7 @@ export function Header() {
           </div>
         )}
 
-        {/* Live Status indicator */}
-        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold shadow-sm shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-          <span>Live Real-time Ops</span>
-        </div>
+
       </div>
 
       {/* Toast Popup */}

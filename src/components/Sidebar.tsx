@@ -228,6 +228,14 @@ export function Sidebar() {
 
       {/* Bottom section & Status Footer */}
       <div className={`pt-6 border-t border-slate-800/80 space-y-3 w-full ${isCollapsed ? 'flex flex-col items-center' : ''}`}>
+        {/* Live Status indicator */}
+        <div className={`w-full flex items-center justify-between py-2.5 rounded-xl text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 shadow-sm ${isCollapsed ? 'px-2 justify-center' : 'px-3.5'}`} title="Live Real-time Ops">
+          <span className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping shrink-0" />
+            {!isCollapsed && <span>Live Real-time Ops</span>}
+          </span>
+        </div>
+
         {/* Supabase Status Indicator */}
         <div className={`py-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-xs font-medium ${isCollapsed ? 'px-2 flex-col gap-2 justify-center w-full' : 'px-3.5'}`} title="Data Source: Excel Seed / Live">
           <div className="flex items-center gap-2">

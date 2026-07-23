@@ -140,7 +140,12 @@ export default function FakturPage() {
   };
 
   const handlePrint = () => {
+    const originalTitle = document.title;
+    if (previewInvoice) {
+      document.title = `Faktur_${previewInvoice.type}_${previewInvoice.invoice_number.replace(/\//g, "-")}`;
+    }
     window.print();
+    document.title = originalTitle;
   };
 
   return (
@@ -324,8 +329,8 @@ export default function FakturPage() {
 
       {/* PREVIEW INVOICE STUDIO MODAL (Supports window.print()) */}
       {previewInvoice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in overflow-y-auto">
-          <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 md:p-10 border border-slate-200/60 dark:border-slate-800/80 shadow-2xl max-h-[92vh] overflow-y-auto print:max-w-none print:max-h-none print:border-none print:shadow-none print:p-0 print:bg-white print:text-black">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in overflow-y-auto print:static print:block print:p-0 print:bg-white print:overflow-visible">
+          <div className="glass-panel w-full max-w-4xl rounded-3xl p-6 md:p-10 border border-slate-200/60 dark:border-slate-800/80 shadow-2xl max-h-[92vh] overflow-y-auto print:max-w-none print:max-h-none print:border-none print:shadow-none print:p-0 print:bg-white print:text-black print:overflow-visible">
             {/* Top Action Buttons inside Modal - hidden when printing */}
             <div className="flex items-center justify-between pb-6 border-b border-slate-200/60 dark:border-slate-800/80 mb-8 print:hidden">
               <div className="flex items-center gap-3">
@@ -364,7 +369,7 @@ export default function FakturPage() {
             </div>
 
             {/* COMMERCIAL INVOICE PRINT DOCUMENT */}
-            <div className="space-y-8 bg-white dark:bg-slate-900/90 print:bg-white p-8 md:p-10 rounded-2xl border border-slate-200 dark:border-slate-800 print:border-none text-slate-900 dark:text-slate-100 print:text-black">
+            <div className="space-y-8 bg-white dark:bg-slate-900/90 print:bg-white p-8 md:p-10 rounded-2xl border border-slate-200 dark:border-slate-800 print:border-none text-slate-900 dark:text-slate-100 print:text-black print:overflow-visible print:w-full print:p-0 print:shadow-none print:m-0">
               {/* Document Header */}
               <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-8 border-b-2 border-slate-800 dark:border-slate-200 print:border-black">
                 <div className="flex items-center gap-4">

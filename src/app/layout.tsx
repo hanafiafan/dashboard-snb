@@ -24,11 +24,11 @@ export default function RootLayout({
     <html lang="id" className={`${fontSans.variable} dark h-full antialiased`}>
       <body className="min-h-screen flex bg-gradient-to-br from-slate-50 via-gray-100 to-emerald-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/30 text-slate-900 dark:text-slate-100 font-sans selection:bg-emerald-500 selection:text-white">
         <DashboardProvider>
-          <div className="flex w-full h-screen overflow-hidden">
+          <div className="flex w-full h-screen overflow-hidden print:h-auto print:overflow-visible print:block">
             <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden print:overflow-visible print:block">
               <Header />
-              <main className="flex-1 overflow-y-auto p-8 relative z-0">
+              <main className="flex-1 overflow-y-auto p-8 relative z-0 print:overflow-visible print:p-0">
                 {children}
               </main>
             </div>

@@ -21,7 +21,7 @@ export function Header() {
   } = useDashboard();
 
   return (
-    <header className="min-h-[5rem] py-3.5 glass-panel border-b border-slate-800/80 px-8 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-10 bg-slate-950/95 backdrop-blur-xl shadow-lg">
+    <header className="min-h-[5rem] py-3.5 glass-panel border-b border-slate-800/80 px-8 flex flex-wrap items-center justify-between gap-4 shrink-0 relative z-10 bg-slate-950/95 backdrop-blur-xl shadow-lg print:hidden">
       {/* Brand Selector Tabs */}
       <div className="flex items-center flex-wrap gap-3">
         <div className="flex items-center gap-2 text-slate-400 font-medium text-xs uppercase tracking-wider">
